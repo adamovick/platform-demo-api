@@ -38,6 +38,9 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          build-args: |
+            APP_COMMIT_SHA=${{ github.sha }}
+            APP_BUILD_TIME=${{ github.run_started_at }}
 
       - name: Checkout GitOps repo
         uses: actions/checkout@v4

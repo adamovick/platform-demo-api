@@ -2,16 +2,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
-var version = "v2";
+var version = "v3";
+var commitSha = Environment.GetEnvironmentVariable("APP_COMMIT_SHA") ?? "unknown";
+var buildTime = Environment.GetEnvironmentVariable("APP_BUILD_TIME") ?? "unknown";
 
-app.MapGet("/", () => Results.Content("""
+app.MapGet("/", () => Results.Content($"""
 <!DOCTYPE html>
 <html>
 <head>
     <title>Adem Koylu Platform Lab</title>
 </head>
 <body style="font-family: Arial; margin:40px;">
-    <h1>🚀 Adem Koylu Platform Lab</h1>
+    <h1>?? Adem Koylu Platform Lab</h1>
 
     <p>Senior Cloud & Platform Engineer</p>
 
@@ -26,10 +28,12 @@ app.MapGet("/", () => Results.Content("""
     </ul>
 
     <h2>Project Status</h2>
-    <p>Healthy ✅</p>
+    <p>Healthy ?</p>
 
-    <h2>Version</h2>
-    <p>v2</p>
+    <h2>Release</h2>
+    <p>Version: {version}</p>
+    <p>Commit: {commitSha}</p>
+    <p>Build Time: {buildTime}</p>
 </body>
 </html>
 """, "text/html"));
@@ -52,7 +56,9 @@ app.MapGet("/health", () => Results.Ok(new
 app.MapGet("/version", () => Results.Ok(new
 {
     version = version,
-    environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "unknown"
+    environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "unknown",
+    commitSha = commitSha,
+    buildTime = buildTime
 }));
 
 app.Run();
