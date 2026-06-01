@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build, Push and Update GitOps
 
 on:
   push:
@@ -11,13 +11,16 @@ permissions:
 
 env:
   IMAGE_NAME: ghcr.io/adamovick/platform-demo-api
+  GITOPS_REPO: adamovick/platform-lab-gitops
+  GITOPS_BRANCH: main
+  DEPLOYMENT_FILE: apps/dotnet-api/base/deployment.yaml
 
 jobs:
-  build:
+  build-and-update-gitops:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source code
+      - name: Checkout app source code
         uses: actions/checkout@v4
 
       - name: Login to GHCR
@@ -35,3 +38,20 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Checkout GitOps repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.GITOPS_REPO }}
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: gitops
+
+      - name: Update image tag in GitOps repo
+        run: |
+          cd gitops
+          sed -i "s|image: ${{ env.IMAGE_NAME }}:.*|image: ${{ env.IMAGE_NAME }}:${{ github.sha }}|g" ${{ env.DEPLOYMENT_FILE }}
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add ${{ env.DEPLOYMENT_FILE }}
+          git commit -m "update platform-demo-api image to ${{ github.sha }}" || echo "No changes to commit"
+          git push origin ${{ env.GITOPS_BRANCH }}
