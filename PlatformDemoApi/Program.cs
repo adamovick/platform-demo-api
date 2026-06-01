@@ -2,18 +2,56 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Platform Demo API is running 🚀");
+var version = "v2";
+
+app.MapGet("/", () => Results.Content("""
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Adem Koylu Platform Lab</title>
+</head>
+<body style="font-family: Arial; margin:40px;">
+    <h1>🚀 Adem Koylu Platform Lab</h1>
+
+    <p>Senior Cloud & Platform Engineer</p>
+
+    <h2>Current Stack</h2>
+    <ul>
+        <li>Kubernetes</li>
+        <li>ArgoCD</li>
+        <li>GitHub Actions</li>
+        <li>GitOps</li>
+        <li>NGINX Ingress</li>
+        <li>Azure</li>
+    </ul>
+
+    <h2>Project Status</h2>
+    <p>Healthy ✅</p>
+
+    <h2>Version</h2>
+    <p>v2</p>
+</body>
+</html>
+""", "text/html"));
+
+app.MapGet("/about", () => Results.Ok(new
+{
+    name = "Adem Koylu",
+    role = "Senior Cloud & Platform Engineer",
+    project = "Platform Engineering Lab",
+    focus = "GitOps, Kubernetes, Azure, Automation"
+}));
 
 app.MapGet("/health", () => Results.Ok(new
 {
     status = "healthy",
     app = "platform-demo-api",
-    version = "v1"
+    version = version
 }));
 
 app.MapGet("/version", () => Results.Ok(new
 {
-    version = "v1",
+    version = version,
     environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "unknown"
 }));
 
