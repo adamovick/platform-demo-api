@@ -2,7 +2,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
-var version = "v3";
+var version = "v4-dev-promotion-test";
 var commitSha = Environment.GetEnvironmentVariable("APP_COMMIT_SHA") ?? "unknown";
 var buildTime = Environment.GetEnvironmentVariable("APP_BUILD_TIME") ?? "unknown";
 
